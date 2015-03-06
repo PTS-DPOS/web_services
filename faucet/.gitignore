@@ -4,6 +4,7 @@
 /.idea
 config/secrets.yml
 config/bitshares.yml
+config/database.yml
 .ruby-version
 .ruby-gemset
 .DS_Store

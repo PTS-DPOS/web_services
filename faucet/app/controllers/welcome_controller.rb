@@ -9,11 +9,11 @@ class WelcomeController < ApplicationController
       session[:pending_registration] = {account_name: params[:account_name], account_key: params[:account_key]}
       redirect_to bitshares_account_path if user_signed_in?
     else
-      @account = BtsAccount.new(name: '', key: '')
+      @account = PtsAccount.new(name: '', key: '')
     end
 
     @asset = Asset.where(assetid: 0).first
-    @faucet_account = Rails.application.config.bitshares.bts_faucet_account
+    @faucet_account = Rails.application.config.bitshares.pts_faucet_account
     @faucet_balance = Rails.cache.fetch('key', expires_in: 1.minute) do
       begin
         res = BitShares::API::Wallet.account_balance(@faucet_account)
@@ -25,8 +25,8 @@ class WelcomeController < ApplicationController
   end
 
   def account_registration_step2
-    @account = BtsAccount.new(bts_account_params)
-    logger.debug "BtsAccount:"
+    @account = PtsAccount.new(pts_account_params)
+    logger.debug "PtsAccount:"
     logger.debug "#{@account}; #{@account.valid?}; #{@account.errors}"
     @account_name = @account.name
     session[:pending_registration] = {account_name: @account.name, account_key: @account.key}
@@ -38,10 +38,10 @@ class WelcomeController < ApplicationController
 
   def refscoreboard
     if request.xhr?
-      @refs = BtsAccount.filter(params[:scope]).grouped_by_referrers
+      @refs = PtsAccount.filter(params[:scope]).grouped_by_referrers
       render '_refs', layout: false
     else
-      @refs = BtsAccount.grouped_by_referrers
+      @refs = PtsAccount.grouped_by_referrers
     end
   end
 
@@ -64,15 +64,15 @@ class WelcomeController < ApplicationController
 
     user = current_user
 
-    bts_account = BtsAccount.where(key: account_key).first
+    pts_account = PtsAccount.where(key: account_key).first
 
-    if user and bts_account and user.id != bts_account.user_id
-      bts_account.update_attribute(:user_id, user.id)
-      bts_account.user = user
+    if user and pts_account and user.id != pts_account.user_id
+      pts_account.update_attribute(:user_id, user.id)
+      pts_account.user = user
     end
 
-    if !user and bts_account
-      user = bts_account.user
+    if !user and pts_account
+      user = pts_account.user
     end
 
     unless user
@@ -84,8 +84,8 @@ class WelcomeController < ApplicationController
       )
     end
 
-    unless bts_account
-      BtsAccount.create(name: account_name, key: account_key, user_id: user.id)
+    unless pts_account
+      PtsAccount.create(name: account_name, key: account_key, user_id: user.id)
     end
 
     Identity.where(uid: account_key, provider: 'bitshares', user_id: user.id).first_or_create do |i|
@@ -99,7 +99,7 @@ class WelcomeController < ApplicationController
 
   private
 
-  def bts_account_params
+  def pts_account_params
     params.require(:account).permit(:name, :key)
   end
 

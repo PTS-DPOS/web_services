@@ -12,17 +12,17 @@ ActiveAdmin.register_page "Dashboard" do
 
     columns do
       column do
-        panel "Recent BTS Accounts" do
+        panel "Recent PTS Accounts" do
           ul do
-            BtsAccount.order('id desc').limit(30).map do |a|
-              li ("#{a.created_at.strftime("%F %H:%M")} " + link_to(a.name, admin_bts_account_path(a))).html_safe
+            PtsAccount.order('id desc').limit(30).map do |a|
+              li ("#{a.created_at.strftime("%F %H:%M")} " + link_to(a.name, admin_pts_account_path(a))).html_safe
             end
           end
         end
 
         panel "Top Referrers" do
           ul do
-            BtsAccount.select([:referrer, 'count(*) as count']).where('referrer is not null').group(:referrer).order('count desc').map do |r|
+            PtsAccount.select([:referrer, 'count(*) as count']).where('referrer is not null').group(:referrer).order('count desc').map do |r|
               li "#{r.referrer}: #{r.count}"
             end
           end

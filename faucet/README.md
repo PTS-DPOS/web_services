@@ -13,7 +13,7 @@
   $ rake db:create
   $ rake db:migrate
 
-4. Install and launch bitshares command line client. (https://github.com/BitShares/bitshares)
+4. Install and launch pts command line client. (https://github.com/PTS-DPOS/PTS)
 
 
 # Configuration

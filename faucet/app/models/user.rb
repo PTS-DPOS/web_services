@@ -1,6 +1,6 @@
 class User < ActiveRecord::Base
   has_many :identities
-  has_many :bts_accounts
+  has_many :pts_accounts
   has_many :dvs_accounts
   has_many :widgets
 
@@ -60,7 +60,7 @@ class User < ActiveRecord::Base
   def register_account(account_name, account_key, referrer=nil)
     logger.info "---------> registering account #{account_name}, key: #{account_key}"
     sleep(0.4) # this is to prevent bots abuse
-    account = self.bts_accounts.where(name: account_name).first
+    account = self.pts_accounts.where(name: account_name).first
     AccountRegistrator.new(self, account, logger).register(account_name, account_key, referrer)
   end
 
